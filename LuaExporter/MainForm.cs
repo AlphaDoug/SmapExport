@@ -158,7 +158,7 @@ namespace LuaExporter
             smapFileName = Path.GetFileName(smapFilePath);
             jObject = JObject.Parse(tatolData);
             //在选择的目录下创建新的目录
-            exportDir = exportDir + @"\" + smapFileName.Replace(".smap", string.Empty) + @"\" + "Tabels";
+            exportDir = exportDir + @"\" + "Tabels";
             Directory.CreateDirectory(exportDir);
             //将json中的表格配置数据读取进入一个二维数组
             foreach (JToken item in jObject["mapdata"]["ObjectsData"])
@@ -182,7 +182,7 @@ namespace LuaExporter
                             }
                         }
                     }
-                    string excelFileName = exportDir + @"\" + tabelFileName;
+                    string excelFileName = exportDir + @"\" + tabelFileName; 
                     HSSFWorkbook workbook = new HSSFWorkbook();
                     //创建工作表
                     var sheet = workbook.CreateSheet(item["name"].ToString());
@@ -197,10 +197,9 @@ namespace LuaExporter
                             var row = sheet.GetRow(i);
                             var cell = row.CreateCell(j);
                             cell.SetCellValue(tabelData[i, j]);
-
                         }
                     }
-                    FileStream file = new FileStream(excelFileName, FileMode.CreateNew, FileAccess.Write);
+                    FileStream file = new FileStream(excelFileName, FileMode.Create);
                     workbook.Write(file);
                     file.Dispose();
                 }
@@ -235,7 +234,7 @@ namespace LuaExporter
             stream.Close();
             smapFileName = Path.GetFileName(smapFilePath);
             jObject = JObject.Parse(tatolData);
-            exportDir = exportDir + @"\" + smapFileName.Replace(".smap", string.Empty) + @"\" + "Luas";
+            exportDir = exportDir + @"\" + "Luas";
             if (!Directory.Exists(exportDir))
             {
                 MessageBox.Show("请选择正确的导出目录!");
@@ -255,31 +254,39 @@ namespace LuaExporter
                 luaText = streamReader.ReadToEnd();
                 streamReader.Close();
                 fileStream.Close();
-                fileGuid = files[i].Name.Split('[')[1].Replace("].lua", "");
-                luaName = files[i].Name.Split('[')[0];
+                //fileGuid = files[i].Name.Split('[')[1].Replace("].lua", "");
+                luaName = files[i].Name.Replace(".lua", "");
                 foreach (JObject item in jObject["mapdata"]["ObjectsData"])
                 {
                     foreach (JValue item1 in item["guid"])
                     {
                         jsonGuid = jsonGuid + item1.ToString() + "-";
                     }
-                    jsonGuid = jsonGuid.Remove(jsonGuid.Length - 1, 1);
-                    if (string.Equals(fileGuid, jsonGuid))
+                    if (item["class"].ToString() == "cScriptObject" ||
+                        item["class"].ToString() == "cModuleScriptObject" ||
+                        item["class"].ToString() == "cCustomEventObject" ||
+                        item["class"].ToString() == "cCollisionEventObject" ||
+                        item["class"].ToString() == "cStartFunctionObject" ||
+                        item["class"].ToString() == "cTickFunctionObject" ||
+                        item["class"].ToString() == "cCustomFunctionObject"
+                        )
                     {
-                        foreach (JObject item1 in item["components"])
+                        jsonGuid = jsonGuid.Remove(jsonGuid.Length - 1, 1);
+                        string n = item["name"].ToString();
+                        if (string.Equals(n, luaName))
                         {
-                            if (item1["class"].ToString() == "sLuaComponent")
+                            foreach (JObject item1 in item["components"])
                             {
-                                item1["data"]["m_luaContent"] = luaText;//测试通过后改成luaText
+                                if (item1["class"].ToString() == "sLuaComponent")
+                                {
+                                    item1["data"]["m_luaContent"] = luaText;//测试通过后改成luaText
+                                }
                             }
                         }
-                    }
+                    }                   
                     jsonGuid = "";
-                }
-                
-            }
-
-            
+                }               
+            }          
             FileStream fileStream1 = new FileStream(smapFilePath, FileMode.Create);
             StreamWriter streamWriter1 = new StreamWriter(fileStream1);
             streamWriter1.Write(ToolClass.Compress(jObject.ToString()));
@@ -307,7 +314,7 @@ namespace LuaExporter
             stream.Close();
             smapFileName = Path.GetFileName(smapFilePath);
             jObject = JObject.Parse(tatolData);//将字符串转化为json格式
-            exportDir = exportDir + @"\" + smapFileName.Replace(".smap", string.Empty) + @"\" + "Tabels";
+            exportDir = exportDir + @"\" + "Tabels";
             if (!Directory.Exists(exportDir))
             {
                 MessageBox.Show("请选择正确的导出目录!");
@@ -370,7 +377,7 @@ namespace LuaExporter
                        title == "Vector2" ||
                        title == "Vector3" ||
                        title == "Euler" ||
-                       title == "Color"
+                       title == "Color" 
                     )
                 {
                     currentColumnIndex += 1;
@@ -499,7 +506,7 @@ namespace LuaExporter
             stream.Close();
             smapFileName = Path.GetFileName(smapFilePath);
             jObject = JObject.Parse(tatolData);
-            exportDir = exportDir + @"\" + smapFileName.Replace(".smap", string.Empty) + @"\" + "Luas";
+            exportDir = exportDir + @"\" + "Luas";
             Directory.CreateDirectory(exportDir);
             //DeleteDir(exportDir);
 
@@ -528,7 +535,7 @@ namespace LuaExporter
                             }
                             guid = guid.Remove(guid.Length - 1, 1);
                             guid += "]";
-                            string dir = exportDir + @"\" + item["name"].ToString() + guid + @".lua";
+                            string dir = exportDir + @"\" + item["name"].ToString() + @".lua";
                             //string newDir = dir;
                             //int i = 1;
                             //while (File.Exists(newDir))
