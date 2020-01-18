@@ -119,7 +119,7 @@
   </resheader>
   <data name="label1.Text" xml:space="preserve">
     <value>1.选择正确的编辑器保存文件和想要导出的目录，目录不能是磁盘根目录。
-2.选择导出lua，将会在指定的目录下创建一个以smap文件名命名的文件夹，其中的Luas存放导出的lua文件
+2.选择导出lua，将会在指定的目录下创建一个Luas文件夹，存放导出的lua文件
 3.选择导出配置，和导出lua类型，存放的文件夹名字为Tabels
 4.选择导入lua或者导入配置，保证选择的目录下有Luas和Tabels两个文件夹,此操作将会把文件夹中的lua文件和配置文件写入smap文件中。
 5.文件夹中新建的lua文件或者配置文件无法导入smap中，功能是否开发待讨论。</value>

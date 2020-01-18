@@ -5,6 +5,7 @@ using System.IO;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using NPOI.HSSF.UserModel;
+using System.Collections.Generic;
 
 namespace LuaExporter
 {
@@ -100,6 +101,7 @@ namespace LuaExporter
             Button senderBtn = sender as Button;
             string effectName = "";
             string effectNames = "";
+            List<string>effectNamesList = new List<string>();
             senderBtn.Enabled = false;
             if (!File.Exists(textBox1.Text))
             {
@@ -125,10 +127,27 @@ namespace LuaExporter
                         {
                             effectName = item1["data"]["m_particleNameInput"].ToString();
                             Console.WriteLine(effectName);
-                            effectNames = effectNames + effectName + Environment.NewLine;
+                            effectNamesList.Add(effectName);
+                            //effectNames = effectNames + effectName + Environment.NewLine;
                         }
                     }
                 }
+            }
+            for (int i = 0; i < effectNamesList.Count; i++)  //外循环是循环的次数
+            {
+                for (int j = effectNamesList.Count - 1; j > i; j--)  //内循环是 外循环一次比较的次数
+                {
+
+                    if (effectNamesList[i] == effectNamesList[j])
+                    {
+                        effectNamesList.RemoveAt(j);
+                    }
+
+                }
+            }
+            for (int i = 0; i < effectNamesList.Count; i++)
+            {
+                effectNames = effectNames + effectNamesList[i] + Environment.NewLine;
             }
             MessageOutWindow messageOutWindow = new MessageOutWindow(effectNames);
             messageOutWindow.ShowDialog();
@@ -293,6 +312,7 @@ namespace LuaExporter
             streamWriter1.Close();
             fileStream1.Close();
             jObject = null;
+            MessageBox.Show("Lua文件导入成功!");
             senderBtn.Enabled = true;
         }
         /// <summary>
@@ -463,6 +483,7 @@ namespace LuaExporter
             streamWriter1.Close();
             fileStream1.Close();
             jObject = null;
+            MessageBox.Show("配置文件导入成功!");
             senderBtn.Enabled = true;
         }
         /// <summary>
